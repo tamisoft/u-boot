@@ -40,7 +40,7 @@
 /* MMC Configs */
 #define CONFIG_FSL_ESDHC
 #define CONFIG_SYS_FSL_ESDHC_ADDR	0
-#define CONFIG_SYS_FSL_ESDHC_NUM	2
+#define CONFIG_SYS_FSL_ESDHC_NUM	1
 
 #define CONFIG_MMC
 #define CONFIG_CMD_MMC
@@ -292,8 +292,9 @@
 #define CONFIG_SYS_LONGHELP		/* undef to save memory */
 #define CONFIG_SYS_HUSH_PARSER		/* use "hush" command parser */
 #define CONFIG_AUTO_COMPLETE
-#define CONFIG_SYS_CBSIZE		512	/* Console I/O Buffer Size */
+#define CONFIG_SYS_CBSIZE		1024	/* Console I/O Buffer Size */
 #define CONFIG_SYS_PROMPT        "Levi U-Boot > "
+#define CONFIG_SYS_PBSIZE (CONFIG_SYS_CBSIZE + sizeof(CONFIG_SYS_PROMPT) + 16)
 
 #define CONFIG_SYS_MAXARGS	16	/* max number of command args */
 #define CONFIG_SYS_BARGSIZE CONFIG_SYS_CBSIZE /* Boot Argument Buffer Size */

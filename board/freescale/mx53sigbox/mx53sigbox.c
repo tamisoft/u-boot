@@ -26,7 +26,7 @@
 #include <linux/fb.h>
 #include <ipu_pixfmt.h>
 
-#define MX53SIGBOX_LCD_POWER		IMX_GPIO_NR(3, 24)
+#define MX53SIGBOX_LCD_POWER		IMX_GPIO_NR(7, 2)
 
 DECLARE_GLOBAL_DATA_PTR;
 
@@ -84,8 +84,8 @@ u32 get_board_rev(void)
 static void setup_iomux_uart(void)
 {
 	static const iomux_v3_cfg_t uart_pads[] = {
-		NEW_PAD_CTRL(MX53_PAD_CSI0_DAT11__UART1_RXD_MUX, UART_PAD_CTRL),
-		NEW_PAD_CTRL(MX53_PAD_CSI0_DAT10__UART1_TXD_MUX, UART_PAD_CTRL),
+		NEW_PAD_CTRL(MX53_PAD_PATA_BUFFER_EN__UART2_RXD_MUX, UART_PAD_CTRL),
+		NEW_PAD_CTRL(MX53_PAD_PATA_DMARQ__UART2_TXD_MUX, UART_PAD_CTRL),
 	};
 
 	imx_iomux_v3_setup_multiple_pads(uart_pads, ARRAY_SIZE(uart_pads));
@@ -94,9 +94,9 @@ static void setup_iomux_uart(void)
 #ifdef CONFIG_USB_EHCI_MX5
 int board_ehci_hcd_init(int port)
 {
-	/* request VBUS power enable pin, GPIO7_8 */
-	imx_iomux_v3_setup_pad(MX53_PAD_PATA_DA_2__GPIO7_8);
-	gpio_direction_output(IMX_GPIO_NR(7, 8), 1);
+	/* request USB HUB power enable pin, GPIO4_11 */
+	imx_iomux_v3_setup_pad(MX53_PAD_KEY_ROW2__GPIO4_11);
+	gpio_direction_output(IMX_GPIO_NR(4, 11), 1);
 	return 0;
 }
 #endif
@@ -104,47 +104,43 @@ int board_ehci_hcd_init(int port)
 static void setup_iomux_fec(void)
 {
 	static const iomux_v3_cfg_t fec_pads[] = {
-		NEW_PAD_CTRL(MX53_PAD_FEC_MDIO__FEC_MDIO, PAD_CTL_HYS |
-			PAD_CTL_DSE_HIGH | PAD_CTL_PUS_22K_UP | PAD_CTL_ODE),
-		NEW_PAD_CTRL(MX53_PAD_FEC_MDC__FEC_MDC, PAD_CTL_DSE_HIGH),
-		NEW_PAD_CTRL(MX53_PAD_FEC_RXD1__FEC_RDATA_1,
-				PAD_CTL_HYS | PAD_CTL_PKE),
-		NEW_PAD_CTRL(MX53_PAD_FEC_RXD0__FEC_RDATA_0,
-				PAD_CTL_HYS | PAD_CTL_PKE),
-		NEW_PAD_CTRL(MX53_PAD_FEC_TXD1__FEC_TDATA_1, PAD_CTL_DSE_HIGH),
-		NEW_PAD_CTRL(MX53_PAD_FEC_TXD0__FEC_TDATA_0, PAD_CTL_DSE_HIGH),
-		NEW_PAD_CTRL(MX53_PAD_FEC_TX_EN__FEC_TX_EN, PAD_CTL_DSE_HIGH),
-		NEW_PAD_CTRL(MX53_PAD_FEC_REF_CLK__FEC_TX_CLK,
-				PAD_CTL_HYS | PAD_CTL_PKE),
-		NEW_PAD_CTRL(MX53_PAD_FEC_RX_ER__FEC_RX_ER,
-				PAD_CTL_HYS | PAD_CTL_PKE),
-		NEW_PAD_CTRL(MX53_PAD_FEC_CRS_DV__FEC_RX_DV,
-				PAD_CTL_HYS | PAD_CTL_PKE),
+		NEW_PAD_CTRL(MX53_PAD_FEC_MDIO__FEC_MDIO        , PAD_CTL_HYS | PAD_CTL_DSE_HIGH | PAD_CTL_PUS_22K_UP | PAD_CTL_ODE),
+		NEW_PAD_CTRL(MX53_PAD_FEC_MDC__FEC_MDC          , PAD_CTL_DSE_HIGH),
+		NEW_PAD_CTRL(MX53_PAD_FEC_RXD1__FEC_RDATA_1     , PAD_CTL_HYS | PAD_CTL_PKE),
+		NEW_PAD_CTRL(MX53_PAD_FEC_RXD0__FEC_RDATA_0     , PAD_CTL_HYS | PAD_CTL_PKE),
+		NEW_PAD_CTRL(MX53_PAD_FEC_TXD1__FEC_TDATA_1     , PAD_CTL_DSE_HIGH),
+		NEW_PAD_CTRL(MX53_PAD_FEC_TXD0__FEC_TDATA_0     , PAD_CTL_DSE_HIGH),
+		NEW_PAD_CTRL(MX53_PAD_FEC_TX_EN__FEC_TX_EN      , PAD_CTL_DSE_HIGH),
+		NEW_PAD_CTRL(MX53_PAD_FEC_REF_CLK__FEC_TX_CLK   , PAD_CTL_HYS | PAD_CTL_PKE),
+		NEW_PAD_CTRL(MX53_PAD_FEC_RX_ER__FEC_RX_ER      , PAD_CTL_HYS | PAD_CTL_PKE),
+		NEW_PAD_CTRL(MX53_PAD_FEC_CRS_DV__FEC_RX_DV     , PAD_CTL_HYS | PAD_CTL_PKE),
 	};
 
 	imx_iomux_v3_setup_multiple_pads(fec_pads, ARRAY_SIZE(fec_pads));
+
+	/* FEC reset GPIO4_15 */
+	imx_iomux_v3_setup_pad(MX53_PAD_KEY_ROW4__GPIO4_15);
+	/* FEC clk_en GPIO7_10 */
+	imx_iomux_v3_setup_pad(MX53_PAD_PATA_CS_1__GPIO7_10);
+
+	gpio_direction_output(IMX_GPIO_NR(4, 15), 0); // pull reset low
+	gpio_direction_output(IMX_GPIO_NR(7, 10), 1); // enable fec clk
+    udelay(1000);
+	gpio_direction_output(IMX_GPIO_NR(4, 15), 1); // release reset
 }
 
 #ifdef CONFIG_FSL_ESDHC
-struct fsl_esdhc_cfg esdhc_cfg[2] = {
-	{MMC_SDHC1_BASE_ADDR},
-	{MMC_SDHC3_BASE_ADDR},
+struct fsl_esdhc_cfg esdhc_cfg[1] = {
+	{MMC_SDHC3_BASE_ADDR}, //eMMC
 };
 
 int board_mmc_getcd(struct mmc *mmc)
 {
 	struct fsl_esdhc_cfg *cfg = (struct fsl_esdhc_cfg *)mmc->priv;
-	int ret;
+	int ret=0;
 
-	imx_iomux_v3_setup_pad(MX53_PAD_EIM_DA11__GPIO3_11);
-	gpio_direction_input(IMX_GPIO_NR(3, 11));
-	imx_iomux_v3_setup_pad(MX53_PAD_EIM_DA13__GPIO3_13);
-	gpio_direction_input(IMX_GPIO_NR(3, 13));
-
-	if (cfg->esdhc_base == MMC_SDHC1_BASE_ADDR)
-		ret = !gpio_get_value(IMX_GPIO_NR(3, 13));
-	else
-		ret = !gpio_get_value(IMX_GPIO_NR(3, 11));
+	if (cfg->esdhc_base == MMC_SDHC3_BASE_ADDR)
+	    ret = 1; //no need to detect card in the onboard eMMC, -1 not impl, 0 no card, 1 card
 
 	return ret;
 }
@@ -166,7 +162,7 @@ int board_mmc_init(bd_t *bis)
 		MX53_PAD_EIM_DA13__GPIO3_13,
 	};
 
-	static const iomux_v3_cfg_t sd2_pads[] = {
+	static const iomux_v3_cfg_t sd3_pads[] = {
 		NEW_PAD_CTRL(MX53_PAD_PATA_RESET_B__ESDHC3_CMD,
 				SD_CMD_PAD_CTRL),
 		NEW_PAD_CTRL(MX53_PAD_PATA_IORDY__ESDHC3_CLK, SD_PAD_CTRL),
@@ -184,18 +180,18 @@ int board_mmc_init(bd_t *bis)
 	u32 index;
 	int ret;
 
-	esdhc_cfg[0].sdhc_clk = mxc_get_clock(MXC_ESDHC_CLK);
-	esdhc_cfg[1].sdhc_clk = mxc_get_clock(MXC_ESDHC3_CLK);
+	esdhc_cfg[0].sdhc_clk = mxc_get_clock(MXC_ESDHC3_CLK);
+
+	/* release SD3 reset GPIO7_6 */
+	imx_iomux_v3_setup_pad(MX53_PAD_PATA_DA_0__GPIO7_6);
+	gpio_direction_output(IMX_GPIO_NR(7, 6), 1);
+
 
 	for (index = 0; index < CONFIG_SYS_FSL_ESDHC_NUM; index++) {
 		switch (index) {
 		case 0:
-			imx_iomux_v3_setup_multiple_pads(sd1_pads,
-							 ARRAY_SIZE(sd1_pads));
-			break;
-		case 1:
-			imx_iomux_v3_setup_multiple_pads(sd2_pads,
-							 ARRAY_SIZE(sd2_pads));
+			imx_iomux_v3_setup_multiple_pads(sd3_pads,
+							 ARRAY_SIZE(sd3_pads));
 			break;
 		default:
 			printf("Warning: you configured more ESDHC controller"
