@@ -26,7 +26,7 @@
 #include <linux/fb.h>
 #include <ipu_pixfmt.h>
 
-#define MX53SIGBOX_LCD_POWER		IMX_GPIO_NR(7, 2)
+/*#define MX53SIGBOX_LCD_POWER		IMX_GPIO_NR(7, 2)*/
 
 DECLARE_GLOBAL_DATA_PTR;
 
@@ -125,7 +125,7 @@ static void setup_iomux_fec(void)
 
 	gpio_direction_output(IMX_GPIO_NR(4, 15), 0); // pull reset low
 	gpio_direction_output(IMX_GPIO_NR(7, 10), 1); // enable fec clk
-    udelay(1000);
+//    udelay(1000);
 	gpio_direction_output(IMX_GPIO_NR(4, 15), 1); // release reset
 }
 
@@ -371,7 +371,6 @@ int board_init(void)
 {
 	gd->bd->bi_boot_params = PHYS_SDRAM_1 + 0x100;
 
-	mxc_set_sata_internal_clock();
 	setup_iomux_i2c();
 
 	return 0;

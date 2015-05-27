@@ -12,7 +12,7 @@
 #include <linux/fb.h>
 #include <ipu_pixfmt.h>
 
-#define MX53SIGBOX_LCD_POWER		IMX_GPIO_NR(3, 24)
+#define MX53SIGBOX_LCD_POWER		IMX_GPIO_NR(7, 2)
 
 static struct fb_videomode const claa_wvga = {
 	.name		= "CLAA07LC0ACW",
@@ -80,13 +80,13 @@ void setup_iomux_lcd(void)
 
 	imx_iomux_v3_setup_multiple_pads(lcd_pads, ARRAY_SIZE(lcd_pads));
 
-	/* Turn on GPIO backlight */
-	imx_iomux_v3_setup_pad(MX53_PAD_EIM_D24__GPIO3_24);
+	/* Turn on sil 9024 */
+	imx_iomux_v3_setup_pad(MX53_PAD_PATA_INTRQ__GPIO7_2); //7-2 see other file
 	gpio_direction_output(MX53SIGBOX_LCD_POWER, 1);
 
-	/* Turn on display contrast */
+	/* Turn on display contrast
 	imx_iomux_v3_setup_pad(MX53_PAD_GPIO_1__GPIO1_1);
-	gpio_direction_output(IMX_GPIO_NR(1, 1), 1);
+	gpio_direction_output(IMX_GPIO_NR(1, 1), 1);*/
 }
 
 int board_video_skip(void)
