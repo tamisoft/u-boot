@@ -466,6 +466,10 @@ config TARGET_MX53LOCO
 	bool "Support mx53loco"
 	select CPU_V7
 
+config TARGET_MX53SIGBOX
+	bool "Support mx53 signove box"
+	select CPU_V7
+
 config TARGET_MX53SMD
 	bool "Support mx53smd"
 	select CPU_V7
@@ -819,6 +823,7 @@ source "board/freescale/mx51evk/Kconfig"
 source "board/freescale/mx53ard/Kconfig"
 source "board/freescale/mx53evk/Kconfig"
 source "board/freescale/mx53loco/Kconfig"
+source "board/freescale/mx53sigbox/Kconfig"
 source "board/freescale/mx53smd/Kconfig"
 source "board/freescale/mx6qarm2/Kconfig"
 source "board/freescale/mx6qsabreauto/Kconfig"
