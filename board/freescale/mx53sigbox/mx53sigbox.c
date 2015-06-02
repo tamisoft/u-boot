@@ -397,6 +397,7 @@ int board_init(void)
     set_ssi_ext2_clk();
 	setup_iomux_i2c();
 
+    udelay(10);
     release_usb_hub_reset(); //Clock was set to the SSI EXT2 pin, let's reset the hub
 	return 0;
 }

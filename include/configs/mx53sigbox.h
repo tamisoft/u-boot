@@ -73,11 +73,12 @@
 #define CONFIG_USB_EHCI
 #define CONFIG_USB_EHCI_MX5
 #define CONFIG_USB_STORAGE
-#define CONFIG_USB_KEYBOARD
+/* #define CONFIG_USB_KEYBOARD  This blocks usb reset*/
 #define CONFIG_USB_HOST_ETHER
 #define CONFIG_USB_ETHER_ASIX
 #define CONFIG_USB_ETHER_MCS7830
 #define CONFIG_USB_ETHER_SMSC95XX
+#define CONFIG_USB_HUB_PORT_POWER_ON_DELAY 1500 /* in ms, because our board works unreliably with default 1s TD timeouts occur */
 #define CONFIG_MXC_USB_PORT	1
 #define CONFIG_MXC_USB_PORTSC	(PORT_PTS_UTMI | PORT_PTS_PTW)
 #define CONFIG_MXC_USB_FLAGS	0

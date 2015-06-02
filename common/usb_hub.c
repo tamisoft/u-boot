@@ -99,7 +99,11 @@ static void usb_hub_power_on(struct usb_hub_device *hub)
 	 * Wait for power to become stable,
 	 * plus spec-defined max time for device to connect
 	 */
+#ifdef CONFIG_USB_HUB_PORT_POWER_ON_DELAY
+	mdelay(pgood_delay + CONFIG_USB_HUB_PORT_POWER_ON_DELAY);
+#else
 	mdelay(pgood_delay + 1000);
+#endif
 }
 
 void usb_hub_reset(void)
