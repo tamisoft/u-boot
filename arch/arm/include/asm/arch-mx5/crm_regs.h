@@ -302,6 +302,25 @@ struct mxc_ccm_reg {
 #define MXC_CCM_CSCDR1_UART_CLK_PODF(v)			((v) & 0x7)
 #define MXC_CCM_CSCDR1_UART_CLK_PODF_RD(r)		((r) & 0x7)
 
+/* define the bits in register CS2CDR */
+#define MXC_CCM_CS2CDR_SSI_EXT2_CLK_PRED_OFFSET	22
+#define MXC_CCM_CS2CDR_SSI_EXT2_CLK_PRED_MASK	(0x7 << 22)
+#define MXC_CCM_CS2CDR_SSI_EXT2_CLK_PRED(v)		(((v) & 0x7) << 22)
+#define MXC_CCM_CS2CDR_SSI_EXT2_CLK_PRED_RD(r)	(((r) >> 22) & 0x7)
+#define MXC_CCM_CS2CDR_SSI_EXT2_CLK_PODF_OFFSET	16
+#define MXC_CCM_CS2CDR_SSI_EXT2_CLK_PODF_MASK	(0x3f << 16)
+#define MXC_CCM_CS2CDR_SSI_EXT2_CLK_PODF(v)		(((v) & 0x3f) << 16)
+#define MXC_CCM_CS2CDR_SSI_EXT2_CLK_PODF_RD(r)	(((r) >> 16) & 0x3f)
+#define MXC_CCM_CS2CDR_SSI2_CLK_PRED_OFFSET	6
+#define MXC_CCM_CS2CDR_SSI2_CLK_PRED_MASK	(0x7 << 6)
+#define MXC_CCM_CS2CDR_SSI2_CLK_PRED(v)		(((v) & 0x7) << 6)
+#define MXC_CCM_CS2CDR_SSI2_CLK_PRED_RD(r)	(((r) >> 6) & 0x7)
+#define MXC_CCM_CS2CDR_SSI2_CLK_PODF_OFFSET	0
+#define MXC_CCM_CS2CDR_SSI2_CLK_PODF_MASK	(0x3f << 0)
+#define MXC_CCM_CS2CDR_SSI2_CLK_PODF(v)		(((v) & 0x3f) << 0)
+#define MXC_CCM_CS2CDR_SSI2_CLK_PODF_RD(r)	(((r) >> 0) & 0x3f)
+
+
 /* Define the bits in register CCDR */
 #define MXC_CCM_CCDR_IPU_HS_MASK			(0x1 << 17)
 

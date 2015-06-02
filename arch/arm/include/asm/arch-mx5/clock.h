@@ -39,6 +39,7 @@ enum mxc_clock {
 	MXC_NFC_CLK,
 	MXC_PERIPH_CLK,
 	MXC_I2C_CLK,
+	MXC_SSI_EXT2_CLK,
 };
 
 u32 imx_get_uartclk(void);
@@ -48,6 +49,7 @@ int mxc_set_clock(u32 ref, u32 freq, u32 clk_type);
 void set_usb_phy_clk(void);
 void enable_usb_phy1_clk(bool enable);
 void enable_usb_phy2_clk(bool enable);
+void set_ssi_ext2_clk(void); //Enable ssi EXT2 for USB HUB
 void set_usboh3_clk(void);
 void enable_usboh3_clk(bool enable);
 void mxc_set_sata_internal_clock(void);

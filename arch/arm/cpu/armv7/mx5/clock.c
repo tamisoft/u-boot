@@ -94,6 +94,15 @@ void enable_usboh3_clk(bool enable)
 			MXC_CCM_CCGR2_USBOH3_60M(cg));
 }
 
+void set_ssi_ext2_clk(void)
+{
+    /* PRED : default div by 3 -> unchanged, PODF: set to div by 3 -> 0=div by 1 */
+	clrsetbits_le32(&mxc_ccm->cs2cdr,
+			MXC_CCM_CS2CDR_SSI_EXT2_CLK_PODF_MASK,
+			MXC_CCM_CS2CDR_SSI_EXT2_CLK_PODF(2));
+}
+
+
 #ifdef CONFIG_SYS_I2C_MXC
 /* i2c_num can be from 0, to 1 for i.MX51 and 2 for i.MX53 */
 int enable_i2c_clk(unsigned char enable, unsigned i2c_num)
@@ -362,6 +371,26 @@ static u32 get_uart_clk(void)
 }
 
 /*
+ * Get the rate of ssi ext2 clk.
+ */
+static u32 get_ssi_ext2_clk(void)
+{
+	unsigned int clk_sel, freq, reg, pred, podf;
+
+	reg = readl(&mxc_ccm->cscmr1);
+	clk_sel = MXC_CCM_CSCMR1_SSI_EXT2_CLK_SEL_RD(reg);
+	freq = get_standard_pll_sel_clk(clk_sel);
+
+	reg = readl(&mxc_ccm->cs2cdr);
+	pred = MXC_CCM_CS2CDR_SSI_EXT2_CLK_PRED_RD(reg);
+	podf = MXC_CCM_CS2CDR_SSI_EXT2_CLK_PODF_RD(reg);
+	freq /= (pred + 1) * (podf + 1);
+
+	return freq;
+}
+
+
+/*
  * get cspi clock rate.
  */
 static u32 imx_get_cspiclk(void)
@@ -513,6 +542,8 @@ unsigned int mxc_get_clock(enum mxc_clock clk)
 		return get_ahb_clk();
 	case MXC_DDR_CLK:
 		return get_ddr_clk();
+	case MXC_SSI_EXT2_CLK:
+		return get_ssi_ext2_clk();
 	default:
 		break;
 	}
@@ -936,6 +967,9 @@ int do_mx5_showclocks(cmd_tbl_t *cmdtp, int flag, int argc, char * const argv[])
 	printf("DDR        %8d kHz\n", mxc_get_clock(MXC_DDR_CLK) / 1000);
 #ifdef CONFIG_MXC_SPI
 	printf("CSPI       %8d kHz\n", mxc_get_clock(MXC_CSPI_CLK) / 1000);
+#endif
+#ifdef	CONFIG_MX53
+	printf("SSI_EXT2   %8d kHz\n", mxc_get_clock(MXC_SSI_EXT2_CLK) / 1000);
 #endif
 	return 0;
 }

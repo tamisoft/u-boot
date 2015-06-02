@@ -101,6 +101,29 @@ int board_ehci_hcd_init(int port)
 }
 #endif
 
+static void setup_iomux_usbhub(void)
+{
+    /* N_RESET -> first put the hub in reset state, we need clock and configuration first */
+	imx_iomux_v3_setup_pad(MX53_PAD_PATA_DMACK__GPIO6_18);
+	gpio_direction_output(IMX_GPIO_NR(6, 18), 0);
+    /* CFG_SEL_0 -> set the HUB to standlone mode, no i2c control, default config, self powered */
+	imx_iomux_v3_setup_pad(MX53_PAD_KEY_COL3__GPIO4_12);
+	gpio_direction_output(IMX_GPIO_NR(4, 12), 0);
+    /* CFG_SEL_1 -> set the HUB to standlone mode, no i2c control */
+	imx_iomux_v3_setup_pad(MX53_PAD_PATA_DIOW__GPIO6_17);
+	gpio_direction_output(IMX_GPIO_NR(6, 17), 0);
+    /* Clock -> CCM SSI EXT2 24Mhz */
+	imx_iomux_v3_setup_pad(MX53_PAD_GPIO_1__CCM_SSI_EXT2_CLK);
+
+    return 0;
+}
+
+static void release_usb_hub_reset(void)
+{
+    /* N_RESET -> let's release the reset ROCK ON!*/
+	gpio_direction_output(IMX_GPIO_NR(6, 18), 1);
+}
+
 static void setup_iomux_fec(void)
 {
 	static const iomux_v3_cfg_t fec_pads[] = {
@@ -354,7 +377,7 @@ int board_early_init_f(void)
 	setup_iomux_uart();
 	setup_iomux_fec();
 	setup_iomux_lcd();
-
+    setup_iomux_usbhub();
 	return 0;
 }
 
@@ -371,8 +394,10 @@ int board_init(void)
 {
 	gd->bd->bi_boot_params = PHYS_SDRAM_1 + 0x100;
 
+    set_ssi_ext2_clk();
 	setup_iomux_i2c();
 
+    release_usb_hub_reset(); //Clock was set to the SSI EXT2 pin, let's reset the hub
 	return 0;
 }
 
