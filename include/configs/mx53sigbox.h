@@ -70,8 +70,12 @@
 /* USB Configs */
 #define CONFIG_CMD_USB
 #define CONFIG_CMD_FAT
+
 #define CONFIG_USB_EHCI
 #define CONFIG_USB_EHCI_MX5
+
+/* USE_USB_HOST if you don't need client/gadget support*/
+#ifdef USE_USB_HOST
 #define CONFIG_USB_STORAGE
 /* #define CONFIG_USB_KEYBOARD  This blocks usb reset*/
 #define CONFIG_USB_HOST_ETHER
@@ -80,6 +84,28 @@
 #define CONFIG_USB_ETHER_SMSC95XX
 #define CONFIG_USB_HUB_PORT_POWER_ON_DELAY 1500 /* in ms, because our board works unreliably with default 1s TD timeouts occur */
 #define CONFIG_MXC_USB_PORT	1
+#else
+#define CONFIG_CI_UDC
+#define CONFIG_USBD_HS
+#define CONFIG_USB_GADGET_DUALSPEED
+#define CONFIG_USB_GADGET
+#define CONFIG_CMD_USB_MASS_STORAGE
+#define CONFIG_USB_GADGET_MASS_STORAGE
+#define CONFIG_USBDOWNLOAD_GADGET
+#define CONFIG_USB_GADGET_VBUS_DRAW     2
+#define CONFIG_USB_ETHER
+#define CONFIG_USB_ETH_CDC
+#define CONFIG_G_DNL_VENDOR_NUM         0x0525
+#define CONFIG_G_DNL_PRODUCT_NUM        0xa4a5
+#define CONFIG_G_DNL_MANUFACTURER       "FSL"
+#define CONFIG_SYS_CACHELINE_SIZE       64
+#define CONFIG_MXC_USB_PORT	0
+#define CONFIG_CMD_FASTBOOT
+#define CONFIG_ANDROID_BOOT_IMAGE
+#define CONFIG_USB_FASTBOOT_BUF_ADDR   CONFIG_SYS_LOAD_ADDR
+#define CONFIG_USB_FASTBOOT_BUF_SIZE   0x07000000
+#endif
+
 #define CONFIG_MXC_USB_PORTSC	(PORT_PTS_UTMI | PORT_PTS_PTW)
 #define CONFIG_MXC_USB_FLAGS	0
 
@@ -114,7 +140,7 @@
 
 #define CONFIG_LOADADDR		0x70010000	/* loadaddr env var */
 #define CONFIG_SYS_TEXT_BASE    0x77800000
-
+/* ethaddr environment can be set for the mac address */
 #define CONFIG_EXTRA_ENV_SETTINGS \
 	"initrd_high=0xffffffff\0" \
 	"fdt_high=0xffffffff\0" \
@@ -295,7 +321,7 @@
 #define CONFIG_SYS_HUSH_PARSER		/* use "hush" command parser */
 #define CONFIG_AUTO_COMPLETE
 #define CONFIG_SYS_CBSIZE		1024	/* Console I/O Buffer Size */
-#define CONFIG_SYS_PROMPT        "Levi U-Boot > "
+#define CONFIG_SYS_PROMPT        "SIGBOX > "
 #define CONFIG_SYS_PBSIZE (CONFIG_SYS_CBSIZE + sizeof(CONFIG_SYS_PROMPT) + 16)
 
 #define CONFIG_SYS_MAXARGS	16	/* max number of command args */
@@ -326,11 +352,11 @@
 /* FLASH and environment organization */
 #define CONFIG_SYS_NO_FLASH
 
-#define CONFIG_ENV_OFFSET      (6 * 64 * 1024)
-#define CONFIG_ENV_SIZE        (8 * 1024)
+/* #define CONFIG_ENV_OFFSET      (6 * 64 * 1024) */
+#define CONFIG_ENV_SIZE        (2 *1024 * 1024)
 #define CONFIG_ENV_IS_IN_MMC
 #define CONFIG_SYS_MMC_ENV_DEV 0
-#define CONFIG_SYS_MMC_ENV_PART 0 /*partition*/
+#define CONFIG_SYS_MMC_ENV_PART 1 /* 0: user, 1: boot0, 2: boot1 eMMC 4.X and above*/
 /* #define CONFIG_ENV_IS_NOWHERE */
 
 #define CONFIG_OF_LIBFDT
